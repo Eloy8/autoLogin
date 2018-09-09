@@ -1,5 +1,5 @@
 # Project files #
-PrivateData.class
+src/main/java/PrivateData
 /target/
 *.xlsx
 *.iml
@@ -11,9 +11,6 @@ PrivateData.class
 *.ipr
 
 ## Generic Java.gitingore file from GitHub ## 
-
-# Compiled class file
-*.class
 
 # Log file
 *.log
