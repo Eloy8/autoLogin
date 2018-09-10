@@ -1,46 +1,67 @@
 package selenium;
 
 import constants.PrivateData;
+import excel.ExcelManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 class SeleniumRunner {
 
-    //Een succes method bouwen, eentje die opnieuw probeert in te loggen en de codes (wanneer geldig) weggooid.
-    //Een quit methode bouwen voor wanneer de login succesvol was
+    private static boolean successLogin = false;
+    private static int loginAttempts = 0;
+    private static int AmountOfCodes = ExcelManager.getAmountOfCodes();
 
-    static void start() throws Exception {
-        String code = null;
-        int loginAttempts = 0;
-        boolean successLogin = false;
+    static void start() throws InterruptedException {
+        String[] codeList = new String[3];
+        String code = codeList[loginAttempts];
 
-        //Initialize Gecko and Firefox Drivers
         System.setProperty("webdriver.gecko.driver", PrivateData.geckoDriverPathName);
         WebDriver driver = new FirefoxDriver();
+
+        login(driver, code);
+        quit(driver);
+    }
+
+    private static void login(WebDriver driver, String code) {
         driver.get(PrivateData.testSiteUrl);
-
-        while (!successLogin && loginAttempts < 3)
-
-        {
+        while (!successLogin && loginAttempts < AmountOfCodes) {
             try {
-                ((FirefoxDriver) driver).findElementById("prepaid_code").click();
-                ((FirefoxDriver) driver).findElementById("prepaid_code").sendKeys(code);
-                //Hoe ervoor zorgen dat er 3 keer een andere code is? For-each loop?
-                Thread.sleep(1000);
-                ((FirefoxDriver) driver).findElementById("sign_in").click();
-                ((FirefoxDriver) driver).findElementByXPath("//*[contains(text(), 'success')]");
-                successLogin = true;
+                webdriver(driver, code);
             } catch (Exception e) {
-                System.out.println("Invalid card number: " + code);
-                loginAttempts++;
-                if (loginAttempts == 3) {
-                    System.out.println("ERROR: FAILED TO LOGIN");
-                }
+                error(code);
             }
         }
+    }
 
+    private static void webdriver(WebDriver driver, String code) throws InterruptedException {
+        ((FirefoxDriver) driver).findElementById("prepaid_code").click();
+        ((FirefoxDriver) driver).findElementById("prepaid_code").sendKeys(code);
+        ((FirefoxDriver) driver).findElementById("sign_in").click();
+        Thread.sleep(1000);
+        ((FirefoxDriver) driver).findElementByXPath("//*[contains(text(), 'success')]");
+        successLogin = true;
+    }
+
+    private static void error(String code) {
+        System.out.println("Invalid card number: " + code);
+        loginAttempts++;
+        if (loginAttempts >= AmountOfCodes) {
+            System.out.println("ERROR: FAILED TO LOGIN");
+        }
+    }
+
+    private static void quit(WebDriver driver) throws InterruptedException {
         Thread.sleep(5000);
         driver.quit();
-        return;
+        if (successLogin) {
+            //deleteWorking code toevoegen!
+
+        } else {
+            //TODO: Een message over een internetcheck en de mogelijkheid om opnieuw te proberen!
+
+        }
+
+
     }
+
 }

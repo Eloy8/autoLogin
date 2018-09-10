@@ -8,15 +8,16 @@ public class Code {
     private String code;
     private int codeUse;
 
-    public Code(){}
+    public Code() {
+    }
 
-    public Code(int id, String code, int codeUse){
+    public Code(int id, String code, int codeUse) {
         this.id = id;
         this.code = code;
         this.codeUse = codeUse;
     }
 
-    public String toString(){
+    public String toString() {
         return "#" + id + " " + code + " (" + codeUse + "/3 times used)";
     }
 

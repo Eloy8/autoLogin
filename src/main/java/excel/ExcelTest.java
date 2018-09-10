@@ -12,10 +12,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class excelTest {
+public class ExcelTest {
 
     //This class is used to test the containment and the index of the excelsheet.
-    //The excel.excelManager calls this class, which returns a boolean to know the credibility!
+    //The excel.ExcelManager calls this class, which returns a boolean to know the credibility!
 
     //TODO: Prioritize test - Existence and extension file test
 
@@ -61,7 +61,7 @@ public class excelTest {
 
         //Find number of rows in excel file
 //        if(sheet.getLastRowNum()==0) {
-            int rowCount = sheet.getLastRowNum() - sheet.getFirstRowNum();
+        int rowCount = sheet.getLastRowNum() - sheet.getFirstRowNum();
 //        }
         //Create a loop over all the rows of excel file to read it
 
@@ -94,7 +94,7 @@ public class excelTest {
 
         //Create an object of ReadGuru99ExcelFile class
 
-        excelTest objExcelFile = new excelTest();
+        ExcelTest objExcelFile = new ExcelTest();
 
         //Prepare the path of excel file
 

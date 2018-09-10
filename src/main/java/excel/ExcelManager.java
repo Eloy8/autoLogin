@@ -1,7 +1,7 @@
 package excel;
 
-import constants.PrivateData;
 import code.Code;
+import constants.PrivateData;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -13,9 +13,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class excelManager {
+public class ExcelManager {
 
-    //TODO: Integrate excel.excelTest while loading the sourcefile!
+    private static int AmountOfCodes = 3;
+
+    //TODO: Integrate excel.ExcelTest while loading the sourcefile!
     //The file shall be opened and loaded, where several checks shall be done
 
     //The excel sheet shall consist out of the codes (first column) and the login attempts(second column).
@@ -94,11 +96,9 @@ public class excelManager {
     private static int getSheetSize() throws IOException {
 
         int sheetSize = 0;
-
         File src = new File(PrivateData.codeSheetPathName);
 
         FileInputStream fis = new FileInputStream(src);
-
         XSSFWorkbook wb = new XSSFWorkbook(fis);
 
         //Takes the first sheet from the excel file
@@ -106,6 +106,10 @@ public class excelManager {
         sheetSize = sheet.getLastRowNum() + 1;
 
         return sheetSize;
+    }
+
+    public static int getAmountOfCodes() {
+        return AmountOfCodes;
     }
 }
 
