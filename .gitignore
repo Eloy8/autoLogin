@@ -1,5 +1,5 @@
 # Project files #
-src/main/java/PrivateData
+src/main/java/constants
 /target/
 /lib/
 *.xlsx

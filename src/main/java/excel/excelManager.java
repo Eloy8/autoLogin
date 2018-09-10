@@ -1,7 +1,7 @@
 package excel;
 
+import constants.PrivateData;
 import code.Code;
-import PrivateData.PrivateData;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-//import java.util.HashMap;
 import java.util.Random;
 
 public class excelManager {
@@ -48,20 +47,16 @@ public class excelManager {
 
         FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
 
-//        HashMap<Integer, String> loginCodeMap = new HashMap<Integer, String>();
-//        HashMap<Integer, String> codeUseMap = new HashMap<Integer, String>();
-
         for (int i = 1; i < getSheetSize(); i++) {
             Code code;
             String loginCode = sheet.getRow(i).getCell(0).getStringCellValue();
-//            loginCodeMap.put(i, loginCode);
+
 
             DataFormatter formatter = new DataFormatter();
             String codeUseString = formatter.formatCellValue(sheet.getRow(i).getCell(1));
-//            codeUseMap.put(i, codeUseString);
+
             int codeUse = Integer.parseInt(codeUseString);
 
-//            System.out.println("#" + i + " " + loginCodeMap.get(i) + " (" + codeUseMap.get(i) + "/3 times used)");
             code = new Code(i, loginCode, codeUse);
             codeList.add(code);
             System.out.println(code);
@@ -69,8 +64,8 @@ public class excelManager {
         }
 
         System.out.println("\n");
-        for(int i=0;i<codeList.size();i++){
-            System.out.println(codeList.get(i));
+        for (Code aCodeList : codeList) {
+            System.out.println(aCodeList);
         }
 
     }
