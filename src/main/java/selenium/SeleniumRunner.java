@@ -1,5 +1,6 @@
 package selenium;
 
+import code.Code;
 import constants.PrivateData;
 import excel.ExcelManager;
 import org.openqa.selenium.WebDriver;
@@ -14,20 +15,19 @@ class SeleniumRunner {
     private static int AmountOfCodes = ExcelManager.getAmountOfCodes();
 
     static void start() throws InterruptedException {
-        String[] codeList = null;
-        codeList = new String[AmountOfCodes];
-        String code = codeList[loginAttempts];
-
+        //TODO: Link maken met CodeManager!
         System.setProperty("webdriver.gecko.driver", PrivateData.geckoDriverPathName);
         WebDriver driver = new FirefoxDriver();
 
-        login(driver, code);
+        login(driver);
         quit(driver);
     }
 
-    private static void login(WebDriver driver, String code) {
+    private static void login(WebDriver driver) {
         driver.get(PrivateData.testSiteUrl);
         while (!successLogin && loginAttempts < AmountOfCodes) {
+            Code[] codeList = new Code[]{new Code(1, "test1", 0), new Code(2, "test2", 0), new Code(3, "test3", 0)};
+            Code code = codeList[loginAttempts];
             try {
                 webdriver(driver, code);
             } catch (Exception e) {
@@ -36,17 +36,18 @@ class SeleniumRunner {
         }
     }
 
-    private static void webdriver(WebDriver driver, String code) throws InterruptedException {
+    private static void webdriver(WebDriver driver, Code code) throws InterruptedException {
         ((FirefoxDriver) driver).findElementById("prepaid_code").click();
-        ((FirefoxDriver) driver).findElementById("prepaid_code").sendKeys(code);
+        ((FirefoxDriver) driver).findElementById("prepaid_code").sendKeys(code.getCode());
         ((FirefoxDriver) driver).findElementById("sign_in").click();
         Thread.sleep(1000);
+        successLogin = true;
         ((FirefoxDriver) driver).findElementByXPath("//*[contains(text(), 'success')]");
         successLogin = true;
     }
 
-    private static void error(String code) {
-        System.out.println("Invalid card number: " + code);
+    private static void error(Code code) {
+        System.out.println("Invalid card number: " + code.getCode());
         loginAttempts++;
         if (loginAttempts >= AmountOfCodes) {
             System.out.println("ERROR: FAILED TO LOGIN");
@@ -57,8 +58,9 @@ class SeleniumRunner {
         closeDriver(driver);
 
         if (successLogin) {
-            //deleteWorking code toevoegen en venster sluiten!
-
+            System.out.println("Succesfull login, goodbye! ;)");
+            //deleteWorking code toevoegen!
+            System.exit(0);
         } else {
             System.out.println("There seems to be a problem logging in..." + "\n" + "This can be caused by internal errors or connection problems.");
             System.out.println("Would you like to retry logging in? Type " + "retry" + "! " + "Would you like to quit this programm? Type " + "quit" + "!");
@@ -72,7 +74,7 @@ class SeleniumRunner {
         String seats = input.next();
 
         if (!seats.matches("[a-zA-Z]+")) {
-            System.out.println("ERROR: Input should be alphabetical! Please type either " + "retry" + " or " + "quit" + " !");
+            System.out.println("ERROR: Input should be alphabetical! Please type either \"retry\" or \"quit\" !");
             input(driver);
         }
 
@@ -87,7 +89,7 @@ class SeleniumRunner {
         } else if (seats.toLowerCase().trim().equals("help")) {
             quit(driver);
         } else {
-            System.out.println("ERROR: Input does not match options! Please type either " + "retry" + " or " + "quit" + " !");
+            System.out.println("ERROR: Input does not match options! Please type either \"retry\" or \"quit\" !");
             input(driver);
         }
     }

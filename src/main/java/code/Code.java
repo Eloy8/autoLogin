@@ -34,4 +34,28 @@ public class Code {
     public int hashCode() {
         return Objects.hash(id, code, codeUse);
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getCodeUse() {
+        return codeUse;
+    }
+
+    public void setCodeUse(int codeUse) {
+        this.codeUse = codeUse;
+    }
 }
