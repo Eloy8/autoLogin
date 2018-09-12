@@ -8,14 +8,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.Scanner;
 
-class SeleniumRunner {
+public class SeleniumRunner {
 
     private static boolean successLogin = false;
     private static int loginAttempts = 0;
     private static int AmountOfCodes = ExcelManager.getAmountOfCodes();
 
-    static void start() throws InterruptedException {
-        //TODO: Link maken met CodeManager!
+    public static void start() throws InterruptedException {
         System.setProperty("webdriver.gecko.driver", PrivateData.geckoDriverPathName);
         WebDriver driver = new FirefoxDriver();
 
@@ -26,7 +25,8 @@ class SeleniumRunner {
     private static void login(WebDriver driver) {
         driver.get(PrivateData.testSiteUrl);
         while (!successLogin && loginAttempts < AmountOfCodes) {
-            Code[] codeList = new Code[]{new Code(1, "test1", 0), new Code(2, "test2", 0), new Code(3, "test3", 0)};
+            //TODO: Link maken met CodeManager!
+            Code[] codeList = new Code[]{new Code(1, "test1", 2), new Code(2, "test2", 1), new Code(3, "test3", 0)};
             Code code = codeList[loginAttempts];
             try {
                 webdriver(driver, code);
@@ -40,15 +40,14 @@ class SeleniumRunner {
         ((FirefoxDriver) driver).findElementById("prepaid_code").click();
         ((FirefoxDriver) driver).findElementById("prepaid_code").sendKeys(code.getCode());
         ((FirefoxDriver) driver).findElementById("sign_in").click();
+        loginAttempts++;
         Thread.sleep(1000);
-        successLogin = true;
-        ((FirefoxDriver) driver).findElementByXPath("//*[contains(text(), 'success')]");
+        ((FirefoxDriver) driver).findElementByXPath("// *[contains(text(), 'success')]");
         successLogin = true;
     }
 
     private static void error(Code code) {
         System.out.println("Invalid card number: " + code.getCode());
-        loginAttempts++;
         if (loginAttempts >= AmountOfCodes) {
             System.out.println("ERROR: FAILED TO LOGIN");
         }

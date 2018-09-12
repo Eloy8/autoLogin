@@ -5,16 +5,55 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>Eloy8</groupId>
-    <artifactId>LoginYacht</artifactId>
+    <artifactId>autoLogin</artifactId>
     <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Automatically Login</name>
 
-    <!--
-    <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>3.17</version>
-    </dependency>
-    -->
+    <properties>
+        <java.version>1.8</java.version>
+        <apache.version>3.17</apache.version>
+        <selenium.version>3.14.0</selenium.version>
+        <guava.version>25.0-jre</guava.version>
+        <maven.compiler.version>3.3</maven.compiler.version>
+    </properties>
 
-    
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgument>-Werror</compilerArgument>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
