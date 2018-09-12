@@ -1,4 +1,4 @@
-package code;
+package data;
 
 import java.util.Objects;
 

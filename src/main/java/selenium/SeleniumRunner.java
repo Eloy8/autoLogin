@@ -1,7 +1,7 @@
 package selenium;
 
-import code.Code;
 import constants.PrivateData;
+import data.Code;
 import excel.ExcelManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -25,7 +25,7 @@ public class SeleniumRunner {
     private static void login(WebDriver driver) {
         driver.get(PrivateData.testSiteUrl);
         while (!successLogin && loginAttempts < AmountOfCodes) {
-            //TODO: Link maken met CodeManager!
+            //TODO: Link maken met CodeManager! De try-catch geen wifi proof maken!
             Code[] codeList = new Code[]{new Code(1, "test1", 2), new Code(2, "test2", 1), new Code(3, "test3", 0)};
             Code code = codeList[loginAttempts];
             try {
@@ -77,19 +77,23 @@ public class SeleniumRunner {
             input(driver);
         }
 
-        inputLoop(input, seats, driver);
+        inputLoop(seats, driver);
     }
 
-    private static void inputLoop(Scanner input, String seats, WebDriver driver) throws InterruptedException {
-        if (seats.toLowerCase().trim().equals("retry")) {
-            SeleniumRunner.start();
-        } else if (seats.toLowerCase().trim().equals("quit")) {
-            System.exit(0);
-        } else if (seats.toLowerCase().trim().equals("help")) {
-            quit(driver);
-        } else {
-            System.out.println("ERROR: Input does not match options! Please type either \"retry\" or \"quit\" !");
-            input(driver);
+    private static void inputLoop(String seats, WebDriver driver) throws InterruptedException {
+        switch (seats.toLowerCase().trim()) {
+            case "retry":
+                SeleniumRunner.start();
+                break;
+            case "quit":
+                System.exit(0);
+            case "help":
+                quit(driver);
+                break;
+            default:
+                System.out.println("ERROR: Input does not match options! Please type either \"retry\" or \"quit\" !");
+                input(driver);
+                break;
         }
     }
 
