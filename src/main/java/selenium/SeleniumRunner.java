@@ -6,6 +6,7 @@ import excel.ExcelManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class SeleniumRunner {
@@ -14,7 +15,7 @@ public class SeleniumRunner {
     private static int loginAttempts = 0;
     private static int AmountOfCodes = ExcelManager.getAmountOfCodes();
 
-    public static void start() throws InterruptedException {
+    public static void start() throws InterruptedException, IOException {
         System.setProperty("webdriver.gecko.driver", PrivateData.geckoDriverPathName);
         WebDriver driver = new FirefoxDriver();
 
@@ -22,17 +23,27 @@ public class SeleniumRunner {
         quit(driver);
     }
 
-    private static void login(WebDriver driver) {
+    private static void login(WebDriver driver) throws IOException, InterruptedException {
         driver.get(PrivateData.testSiteUrl);
         while (!successLogin && loginAttempts < AmountOfCodes) {
-            //TODO: Link maken met CodeManager! De try-catch geen wifi proof maken!
-            Code[] codeList = new Code[]{new Code(1, "test1", 2), new Code(2, "test2", 1), new Code(3, "test3", 0)};
+            Code[] codeList = ExcelManager.getUniqueCodeList();
             Code code = codeList[loginAttempts];
+            connectioncheck(driver);
             try {
                 webdriver(driver, code);
             } catch (Exception e) {
                 error(code);
             }
+        }
+    }
+
+    private static void connectioncheck(WebDriver driver) throws IOException, InterruptedException {
+        try {
+            ((FirefoxDriver) driver).findElementById("prepaid_code").click();
+        } catch (Exception e) {
+            System.out.println("ERROR: No internet connection");
+            loginAttempts++;
+            quit(driver);
         }
     }
 
@@ -53,7 +64,7 @@ public class SeleniumRunner {
         }
     }
 
-    private static void quit(WebDriver driver) throws InterruptedException {
+    private static void quit(WebDriver driver) throws InterruptedException, IOException {
         closeDriver(driver);
 
         if (successLogin) {
@@ -68,7 +79,7 @@ public class SeleniumRunner {
         }
     }
 
-    private static void input(WebDriver driver) throws InterruptedException {
+    private static void input(WebDriver driver) throws InterruptedException, IOException {
         Scanner input = new Scanner(System.in);
         String seats = input.next();
 
@@ -80,8 +91,8 @@ public class SeleniumRunner {
         inputLoop(seats, driver);
     }
 
-    private static void inputLoop(String seats, WebDriver driver) throws InterruptedException {
-        switch (seats.toLowerCase().trim()) {
+    private static void inputLoop(String command, WebDriver driver) throws InterruptedException, IOException {
+        switch (command.toLowerCase().trim()) {
             case "retry":
                 SeleniumRunner.start();
                 break;

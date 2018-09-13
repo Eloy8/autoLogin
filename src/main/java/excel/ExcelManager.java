@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+//TODO: Integrate excel.ExcelTest while loading the sourcefile!
+//The file shall be opened and loaded, where several checks shall be done
+//This class should also be able to delete used codes, and maintain the amount of tries to the excel sheet.
+
 public class ExcelManager {
 
     private static int AmountOfCodes = 3;
@@ -19,20 +23,15 @@ public class ExcelManager {
     private static int[] uniqueRandomNumberArray = new int[AmountOfCodes];
     private static ArrayList<Code> codeList = new ArrayList<>();
 
-    //TODO: Integrate excel.ExcelTest while loading the sourcefile!
-    //The file shall be opened and loaded, where several checks shall be done
-    //The excel sheet shall consist out of the codes (first column) and the login attempts(second column).
-    //The X codes can be picked with a random method(via the length of the array?), which will send them to the codemanager
-    //This class should also be able to delete used codes, and maintain the amount of tries to the excel sheet.
-
-    public static void main(String[] args) throws Exception {
-
+    public static Code[] getUniqueCodeList() throws IOException {
         loadCodeList();
         uniqueRandomNumberArray = getRandomUniqueNumberArray();
-
-        for (int anUniqueNumber : uniqueRandomNumberArray) {
-            System.out.println(anUniqueNumber);
+        Code[] uniqueCodeList = new Code[AmountOfCodes];
+        for (int i = 0; i < AmountOfCodes; i++) {
+            uniqueCodeList[i] = codeList.get(uniqueRandomNumberArray[i]);
+            System.out.println(uniqueCodeList[i]);
         }
+        return uniqueCodeList;
     }
 
     private static void loadCodeList() throws IOException {
@@ -53,22 +52,18 @@ public class ExcelManager {
 
             code = new Code(i, loginCode, codeUse);
             codeList.add(code);
-            System.out.println(code);
-
         }
     }
 
     private static int[] getRandomUniqueNumberArray() throws IOException {
-
         uniqueRandomNumberArray = getRandomUniqueNumber();
-
         return uniqueRandomNumberArray;
     }
 
     private static int[] getRandomUniqueNumber() throws IOException {
         while (randomNumberPosition < AmountOfCodes) {
             Random random = new Random();
-            int randomNumber = random.nextInt(getSheetSize());
+            int randomNumber = random.nextInt(getSheetSize() - 1);
             if (randomNumberPosition == 0) {
                 uniqueRandomNumberArray[randomNumberPosition] = randomNumber;
                 randomNumberPosition++;
@@ -80,10 +75,11 @@ public class ExcelManager {
     }
 
     private static void uniquenessCheck(int randomNumber) {
-        boolean noUniqueNumber = false;
+        boolean noUniqueNumber = true;
         for (int anUniqueRandomNumberArray : uniqueRandomNumberArray) {
-            if (randomNumber != anUniqueRandomNumberArray) {
-                noUniqueNumber = true;
+            if (randomNumber == anUniqueRandomNumberArray) {
+                noUniqueNumber = false;
+                break;
             }
         }
         if (noUniqueNumber) {
@@ -92,10 +88,10 @@ public class ExcelManager {
         }
     }
 
+
+
     private static int getSheetSize() throws IOException {
-
         File src = new File(PrivateData.codeSheetPathName);
-
         FileInputStream fis = new FileInputStream(src);
         XSSFWorkbook wb = new XSSFWorkbook(fis);
 
