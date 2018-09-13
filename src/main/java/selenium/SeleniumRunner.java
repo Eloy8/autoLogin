@@ -1,6 +1,6 @@
 package selenium;
 
-import constants.PrivateData;
+import data.PrivateData;
 import data.Code;
 import excel.ExcelManager;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +15,7 @@ public class SeleniumRunner {
     private static int loginAttempts = 0;
     private static int AmountOfCodes = ExcelManager.getAmountOfCodes();
 
-    public static void start() throws InterruptedException, IOException {
+    public void start() {
         System.setProperty("webdriver.gecko.driver", PrivateData.geckoDriverPathName);
         WebDriver driver = new FirefoxDriver();
 
@@ -23,12 +23,20 @@ public class SeleniumRunner {
         quit(driver);
     }
 
-    private static void login(WebDriver driver) throws IOException, InterruptedException {
+    private void login(WebDriver driver){
         driver.get(PrivateData.testSiteUrl);
+        Code[] codeList = null;
+        try {
+             codeList = ExcelManager.getUniqueCodeList(3);
+        } catch (IOException e){
+            System.err.println("Error loading excel file "+ e.getMessage());
+            System.exit(1);
+        }
+
         while (!successLogin && loginAttempts < AmountOfCodes) {
-            Code[] codeList = ExcelManager.getUniqueCodeList();
             Code code = codeList[loginAttempts];
-            connectioncheck(driver);
+
+            connectionCheck(driver);
             try {
                 webdriver(driver, code);
             } catch (Exception e) {
@@ -37,11 +45,11 @@ public class SeleniumRunner {
         }
     }
 
-    private static void connectioncheck(WebDriver driver) throws IOException, InterruptedException {
+    private void connectionCheck(WebDriver driver){
         try {
             ((FirefoxDriver) driver).findElementById("prepaid_code").click();
         } catch (Exception e) {
-            System.out.println("ERROR: No internet connection");
+            System.err.println("ERROR: No internet connection!");
             loginAttempts++;
             quit(driver);
         }
@@ -57,18 +65,18 @@ public class SeleniumRunner {
         successLogin = true;
     }
 
-    private static void error(Code code) {
+    private void error(Code code) {
         System.out.println("Invalid card number: " + code.getCode());
         if (loginAttempts >= AmountOfCodes) {
-            System.out.println("ERROR: FAILED TO LOGIN");
+            System.err.println("ERROR: FAILED TO LOGIN");
         }
     }
 
-    private static void quit(WebDriver driver) throws InterruptedException, IOException {
+    private void quit(WebDriver driver){
         closeDriver(driver);
 
         if (successLogin) {
-            System.out.println("Succesfull login, goodbye! ;)");
+            System.out.println("Succesfull login, goodbye! :)");
             //deleteWorking code toevoegen!
             System.exit(0);
         } else {
@@ -79,22 +87,22 @@ public class SeleniumRunner {
         }
     }
 
-    private static void input(WebDriver driver) throws InterruptedException, IOException {
+    private void input(WebDriver driver) {
         Scanner input = new Scanner(System.in);
-        String seats = input.next();
+        String command = input.next();
 
-        if (!seats.matches("[a-zA-Z]+")) {
+        if (!command.matches("[a-zA-Z]+")) {
             System.out.println("ERROR: Input should be alphabetical! Please type either \"retry\" or \"quit\" !");
             input(driver);
         }
 
-        inputLoop(seats, driver);
+        inputLoop(command, driver);
     }
 
-    private static void inputLoop(String command, WebDriver driver) throws InterruptedException, IOException {
+    private void inputLoop(String command, WebDriver driver) {
         switch (command.toLowerCase().trim()) {
             case "retry":
-                SeleniumRunner.start();
+                this.start();
                 break;
             case "quit":
                 System.exit(0);
@@ -108,9 +116,13 @@ public class SeleniumRunner {
         }
     }
 
-    private static void closeDriver(WebDriver driver) throws InterruptedException {
+    private void closeDriver(WebDriver driver) {
         if (loginAttempts > 0) {
-            Thread.sleep(2000);
+            try {
+                Thread.sleep(2000);
+            } catch(InterruptedException e) {
+                System.err.println("Thread is interrupted!");
+            }
             driver.quit();
         }
         loginAttempts = 0;

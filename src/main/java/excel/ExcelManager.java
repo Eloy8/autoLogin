@@ -1,7 +1,7 @@
 package excel;
 
-import constants.PrivateData;
 import data.Code;
+import data.PrivateData;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,18 +16,25 @@ import java.util.Random;
 //The file shall be opened and loaded, where several checks shall be done
 //This class should also be able to delete used codes, and maintain the amount of tries to the excel sheet.
 
+/**
+ * Reads Excel file and gives an X amount of codes back.
+ *
+ * @return
+ * @throws IOException
+ */
+
 public class ExcelManager {
 
-    private static int AmountOfCodes = 3;
+    private static int amountOfCodes = 3;
     private static int randomNumberPosition = 0;
-    private static int[] uniqueRandomNumberArray = new int[AmountOfCodes];
+    private static int[] uniqueRandomNumberArray = new int[amountOfCodes];
     private static ArrayList<Code> codeList = new ArrayList<>();
 
-    public static Code[] getUniqueCodeList() throws IOException {
+    public static Code[] getUniqueCodeList(int amount) throws IOException {
         loadCodeList();
-        uniqueRandomNumberArray = getRandomUniqueNumberArray();
-        Code[] uniqueCodeList = new Code[AmountOfCodes];
-        for (int i = 0; i < AmountOfCodes; i++) {
+        uniqueRandomNumberArray = getRandomUniqueNumberArray(amount);
+        Code[] uniqueCodeList = new Code[amountOfCodes];
+        for (int i = 0; i < amountOfCodes; i++) {
             uniqueCodeList[i] = codeList.get(uniqueRandomNumberArray[i]);
             System.out.println(uniqueCodeList[i]);
         }
@@ -55,39 +62,41 @@ public class ExcelManager {
         }
     }
 
-    private static int[] getRandomUniqueNumberArray() throws IOException {
-        uniqueRandomNumberArray = getRandomUniqueNumber();
+    private static int[] getRandomUniqueNumberArray(int amount) throws IOException {
+        uniqueRandomNumberArray = getRandomUniqueNumber(amount);
         return uniqueRandomNumberArray;
     }
 
-    private static int[] getRandomUniqueNumber() throws IOException {
-        while (randomNumberPosition < AmountOfCodes) {
+    private static int[] getRandomUniqueNumber(int amount) throws IOException {
+        int position = 0;
+        while (position < amount) { //randomNumberPosition
             Random random = new Random();
             int randomNumber = random.nextInt(getSheetSize() - 1);
-            if (randomNumberPosition == 0) {
-                uniqueRandomNumberArray[randomNumberPosition] = randomNumber;
-                randomNumberPosition++;
+            if (position == 0) {
+                uniqueRandomNumberArray[position] = randomNumber;
+                position++;
             } else {
-                uniquenessCheck(randomNumber);
+                uniquenessCheck(randomNumber, position);
+                position++;
             }
         }
         return uniqueRandomNumberArray;
     }
 
-    private static void uniquenessCheck(int randomNumber) {
+    private static void uniquenessCheck(int randomNumber, int position) {
         boolean noUniqueNumber = true;
         for (int anUniqueRandomNumberArray : uniqueRandomNumberArray) {
             if (randomNumber == anUniqueRandomNumberArray) {
                 noUniqueNumber = false;
+                position++;
                 break;
             }
         }
         if (noUniqueNumber) {
-            uniqueRandomNumberArray[randomNumberPosition] = randomNumber;
-            randomNumberPosition++;
+            uniqueRandomNumberArray[position] = randomNumber;
+
         }
     }
-
 
 
     private static int getSheetSize() throws IOException {
@@ -101,7 +110,7 @@ public class ExcelManager {
     }
 
     public static int getAmountOfCodes() {
-        return AmountOfCodes;
+        return amountOfCodes;
     }
 }
 
