@@ -23,7 +23,7 @@ public class ExcelTest {
 
         //Create an object of File class to open xlsx file
 
-        File file = new File(PrivateData.codeSheetPathName);
+        File file = new File(PrivateData.getCodeSheetPathName());
         if (!file.exists()) {
             throw new FileNotFoundException("File not found");
         }

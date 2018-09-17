@@ -42,7 +42,7 @@ public class ExcelManager {
     }
 
     private static void loadCodeList() throws IOException {
-        File src = new File(PrivateData.codeSheetPathName);
+        File src = new File(PrivateData.getCodeSheetPathName());
         FileInputStream fis = new FileInputStream(src);
         XSSFWorkbook wb = new XSSFWorkbook(fis);
 
@@ -100,7 +100,7 @@ public class ExcelManager {
 
 
     private static int getSheetSize() throws IOException {
-        File src = new File(PrivateData.codeSheetPathName);
+        File src = new File(PrivateData.getCodeSheetPathName());
         FileInputStream fis = new FileInputStream(src);
         XSSFWorkbook wb = new XSSFWorkbook(fis);
 

@@ -9,7 +9,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.IOException;
 
-public class SeleniumRunner {
+public class LocalSeleniumRunner extends SeleniumRunner {
 
     private CommandLineInterpreter cli = new CommandLineInterpreter();
     private static boolean successLogin = false;
@@ -25,7 +25,7 @@ public class SeleniumRunner {
     }
 
     private void login(WebDriver driver) {
-        driver.get(PrivateData.getTestSiteUrl());
+        driver.get(PrivateData.getOfflineSiteUrl());
         Code[] codeList = null;
         try {
             codeList = ExcelManager.getUniqueCodeList(3);
@@ -52,16 +52,23 @@ public class SeleniumRunner {
         } catch (Exception e) {
             System.err.println("ERROR: No internet connection!");
             loginAttempts++;
-            cli.quit(driver, successLogin, loginAttempts);
+            cli.quit(driver, false, 0);
         }
     }
 
-    private void webdriver(WebDriver driver, Code code) throws InterruptedException {
+    private void webdriver(WebDriver driver, Code code) {
         ((FirefoxDriver) driver).findElementById("prepaid_code").click();
         ((FirefoxDriver) driver).findElementById("prepaid_code").sendKeys(code.getCode());
         ((FirefoxDriver) driver).findElementById("sign_in").click();
         loginAttempts++;
         sleep(1000);
+        if (code.getCode().equals(PrivateData.getTestCode1()) || code.getCode().equals(PrivateData.getTestCode2()) || code.getCode().equals(PrivateData.getTestCode3())) {
+            driver.get(PrivateData.getOfflineSuccessSiteUrl());
+            sleep(2000);
+        } else {
+            driver.get(PrivateData.getOfflineErrorSiteUrl());
+            sleep(2000);
+        }
         ((FirefoxDriver) driver).findElementByXPath("// *[contains(text(), 'success')]");
         successLogin = true;
     }
@@ -73,11 +80,5 @@ public class SeleniumRunner {
         }
     }
 
-    void sleep(int time){
-        try{
-            Thread.sleep(time);
-        } catch(Exception e){
-            System.err.println("Error loading excel file " + e.getMessage());
-        }
-    }
+
 }
